@@ -19,6 +19,7 @@ lazy val root =
 lazy val importmap = projectMatrix
   .in(file("importmap"))
   .settings(
+    name := "scalajs-importmap",
     libraryDependencies ++= Seq(
       "org.scala-js" %% "scalajs-linker-interface" % scalaJSVersion,
     ),
