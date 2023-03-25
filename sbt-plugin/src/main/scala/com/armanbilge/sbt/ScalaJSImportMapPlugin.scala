@@ -27,17 +27,21 @@ object ScalaJSImportMapPlugin extends AutoPlugin {
   override def requires = ScalaJSPlugin
 
   object autoImport {
-    lazy val sjsImportMap = settingKey[String => String]("Import map transform function")
+    lazy val scalaJSImportMap = settingKey[String => String]("Import map transform function")
   }
 
   import autoImport._
+
+  override def buildSettings: Seq[Setting[_]] = Seq(
+    scalaJSImportMap := { s => s },
+  )
 
   override def projectSettings: Seq[Setting[_]] =
     inConfig(Compile)(configSettings) ++ inConfig(Test)(configSettings)
 
   private val configSettings = Seq(
     scalaJSIR := {
-      scalaJSIR.value.map(_.map(ImportMappedIRFile.fromIRFile(_)(sjsImportMap.value)))
+      scalaJSIR.value.map(_.map(ImportMappedIRFile.fromIRFile(_)(scalaJSImportMap.value)))
     },
   )
 
