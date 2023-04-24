@@ -12,7 +12,7 @@ addSbtPlugin("com.armanbilge" % "sbt-scalajs-importmap" % "0.1.0")
 enablePlugins(ScalaJSImportMapPlugin)
 scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.ESModule))
 scalaJSImportMap := { (rawImport: String) =>
-  if (rawImport.startsWith("@shoelace-style/shoelace")
+  if (rawImport.startsWith("@shoelace-style/shoelace"))
     "https://cdn.jsdelivr.net/npm/" + rawImport
   else
     rawImport
