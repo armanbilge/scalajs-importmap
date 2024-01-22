@@ -28,7 +28,7 @@ lazy val importmap = projectMatrix
   .jvmPlatform(scalaVersions = Seq(scala2_12, scala2_13))
 
 lazy val importmap2_12 = importmap.jvm(scala2_12)
-lazy val importmap2_13 = importmap.jvm(scala2_12)
+lazy val importmap2_13 = importmap.jvm(scala2_13)
 
 lazy val sbtPlugin = project
   .in(file("sbt-plugin"))
