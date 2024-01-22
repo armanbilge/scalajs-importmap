@@ -23,6 +23,7 @@ lazy val importmap = projectMatrix
     libraryDependencies ++= Seq(
       "org.scala-js" %% "scalajs-linker-interface" % scalaJSVersion,
     ),
+    tlVersionIntroduced := Map("2.13" -> "0.1.1"),
   )
   .defaultAxes(VirtualAxis.jvm)
   .jvmPlatform(scalaVersions = Seq(scala2_12, scala2_13))
