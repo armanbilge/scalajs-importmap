@@ -8,7 +8,7 @@ ThisBuild / startYear := Some(2023)
 ThisBuild / tlSonatypeUseLegacyHost := false
 
 val scala2_12 = "2.12.18"
-val scala2_13 = "2.13.12"
+val scala2_13 = "2.13.13"
 
 lazy val root =
   project
