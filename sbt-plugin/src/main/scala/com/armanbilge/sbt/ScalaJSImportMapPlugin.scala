@@ -40,9 +40,8 @@ object ScalaJSImportMapPlugin extends AutoPlugin {
     inConfig(Compile)(configSettings) ++ inConfig(Test)(configSettings)
 
   private val configSettings = Seq(
-    scalaJSIR := {
-      scalaJSIR.value.map(_.map(ImportMappedIRFile.fromIRFile(_)(scalaJSImportMap.value)))
-    },
+    scalaJSIR :=
+      scalaJSIR.value.map(_.map(ImportMappedIRFile.fromIRFile(_)(scalaJSImportMap.value))),
   )
 
 }
