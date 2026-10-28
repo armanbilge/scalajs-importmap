@@ -16,6 +16,7 @@
 
 package com.armanbilge.sjsimportmap
 
+import org.scalajs.ir.Position
 import org.scalajs.ir.Trees
 import org.scalajs.linker.interface.unstable.IRFileImpl
 
@@ -28,36 +29,39 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
   def entryPointsInfo(implicit ec: ExecutionContext) =
     impl.entryPointsInfo
 
-    def tree(implicit ec: ExecutionContext): Future[Trees.ClassDef] =
-      impl.tree.map { classDef =>
-        if (classDef.jsNativeLoadSpec.isDefined || classDef.jsNativeMembers.nonEmpty)
-          Trees.ClassDef(
-            classDef.name,
-            classDef.originalName,
-            classDef.kind,
-            classDef.jsClassCaptures,
-            classDef.superClass,
-            classDef.interfaces,
-            classDef.jsSuperClass,
-            classDef.jsNativeLoadSpec.map(transform),
-            classDef.fields,
-            classDef.methods,
-            classDef.jsConstructor,
-            classDef.jsMethodProps,
-            classDef.jsNativeMembers.map(transform),
-            classDef.topLevelExportDefs,
-          )(classDef.optimizerHints)(classDef.pos)
-        else classDef
-      }
+  def tree(implicit ec: ExecutionContext): Future[Trees.ClassDef] =
+    impl.tree.map { classDef =>
+      if (classDef.jsNativeLoadSpec.isDefined || classDef.jsNativeMembers.nonEmpty) {
+        implicit val pos: Position = classDef.pos
+        Trees.ClassDef(
+          classDef.name,
+          classDef.originalName,
+          classDef.kind,
+          classDef.jsClassCaptures,
+          classDef.superClass,
+          classDef.interfaces,
+          classDef.jsSuperClass,
+          classDef.jsNativeLoadSpec.map(transform),
+          classDef.fields,
+          classDef.methods,
+          classDef.jsConstructor,
+          classDef.jsMethodProps,
+          classDef.jsNativeMembers.map(transform),
+          classDef.topLevelExportDefs,
+        )(classDef.optimizerHints)
+      } else classDef
+    }
 
-  private[this] def transform(member: Trees.JSNativeMemberDef): Trees.JSNativeMemberDef =
+  private def transform(member: Trees.JSNativeMemberDef): Trees.JSNativeMemberDef = {
+    implicit val pos: Position = member.pos
     Trees.JSNativeMemberDef(
       member.flags,
       member.name,
       transform(member.jsNativeLoadSpec),
-    )(member.pos)
+    )
+  }
 
-  private[this] def transform(spec: Trees.JSNativeLoadSpec): Trees.JSNativeLoadSpec =
+  private def transform(spec: Trees.JSNativeLoadSpec): Trees.JSNativeLoadSpec =
     spec match {
       case importSpec: Trees.JSNativeLoadSpec.Import => transform(importSpec)
       case Trees.JSNativeLoadSpec.ImportWithGlobalFallback(importSpec, globalSpec) =>
@@ -65,7 +69,7 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
       case other => other
     }
 
-  private[this] def transform(
+  private def transform(
       importSpec: Trees.JSNativeLoadSpec.Import,
   ): Trees.JSNativeLoadSpec.Import =
     importSpec.copy(module = mapper(importSpec.module))
