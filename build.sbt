@@ -1,14 +1,12 @@
-ThisBuild / tlBaseVersion := "0.1"
+ThisBuild / tlBaseVersion := "0.2"
 
 ThisBuild / organization := "com.armanbilge"
 ThisBuild / organizationName := "Arman Bilge"
 ThisBuild / developers += tlGitHubDev("armanbilge", "Arman Bilge")
 ThisBuild / startYear := Some(2023)
 
-ThisBuild / tlSonatypeUseLegacyHost := false
-
-val scala2_12 = "2.12.18"
-val scala2_13 = "2.13.12"
+val scala2_12 = "2.12.21"
+val scala2_13 = "2.13.18"
 
 lazy val root =
   project
@@ -22,6 +20,7 @@ lazy val importmap = projectMatrix
     name := "scalajs-importmap",
     libraryDependencies ++= Seq(
       "org.scala-js" %% "scalajs-linker-interface" % scalaJSVersion,
+      "org.scalameta" %% "munit" % "1.0.4" % Test,
     ),
     tlVersionIntroduced := Map("2.13" -> "0.1.1"),
   )
