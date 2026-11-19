@@ -5,10 +5,8 @@ ThisBuild / organizationName := "Arman Bilge"
 ThisBuild / developers += tlGitHubDev("armanbilge", "Arman Bilge")
 ThisBuild / startYear := Some(2023)
 
-ThisBuild / tlSonatypeUseLegacyHost := false
-
-val scala2_12 = "2.12.18"
-val scala2_13 = "2.13.12"
+val scala2_12 = "2.12.21"
+val scala2_13 = "2.13.18"
 
 lazy val root =
   project
