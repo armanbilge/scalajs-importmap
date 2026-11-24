@@ -32,7 +32,6 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
   def tree(implicit ec: ExecutionContext): Future[Trees.ClassDef] =
     impl.tree.map { classDef =>
       if (classDef.jsNativeLoadSpec.isDefined || classDef.jsNativeMembers.nonEmpty) {
-        implicit val pos: Position = classDef.pos
         Trees.ClassDef(
           classDef.name,
           classDef.originalName,
@@ -48,7 +47,7 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
           classDef.jsMethodProps,
           classDef.jsNativeMembers.map(transform),
           classDef.topLevelExportDefs,
-        )(classDef.optimizerHints)
+        )(classDef.optimizerHints)(using classDef.pos)
       } else classDef
     }
 
