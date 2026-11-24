@@ -57,12 +57,11 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
   private def transform(importDef: Trees.TopLevelImportDef): Trees.TopLevelImportDef =
     importDef match {
       case member: Trees.JSNativeMemberDef =>
-        implicit val pos: Position = member.pos
         Trees.JSNativeMemberDef(
           member.flags,
           member.name,
           transform(member.jsNativeLoadSpec),
-        )
+        )(using member.pos)
       // Wasm imports refer to Wasm module names, not JS module specifiers
       case other => other
     }
