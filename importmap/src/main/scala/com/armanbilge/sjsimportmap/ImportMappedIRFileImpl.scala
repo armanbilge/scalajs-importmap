@@ -16,7 +16,6 @@
 
 package com.armanbilge.sjsimportmap
 
-import org.scalajs.ir.Position
 import org.scalajs.ir.Trees
 import org.scalajs.linker.interface.unstable.IRFileImpl
 
