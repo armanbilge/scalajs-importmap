@@ -1,4 +1,4 @@
-ThisBuild / tlBaseVersion := "0.1"
+ThisBuild / tlBaseVersion := "0.2"
 
 ThisBuild / organization := "com.armanbilge"
 ThisBuild / organizationName := "Arman Bilge"
@@ -24,8 +24,9 @@ lazy val importmap = projectMatrix
     name := "scalajs-importmap",
     libraryDependencies ++= Seq(
       "org.scala-js" %% "scalajs-linker-interface" % scalaJSVersion,
+      "org.scalameta" %% "munit" % "1.0.4" % Test,
     ),
-    tlVersionIntroduced := Map("2.13" -> "0.1.1", "3" -> "0.1.2"),
+    tlVersionIntroduced := Map("2.13" -> "0.1.1", "3" -> "0.2.1"),
   )
   .defaultAxes(VirtualAxis.jvm)
   .jvmPlatform(scalaVersions = Seq(scala2_12, scala2_13, scala3))

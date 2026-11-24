@@ -31,7 +31,10 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
 
   def tree(implicit ec: ExecutionContext): Future[Trees.ClassDef] =
     impl.tree.map { classDef =>
-      if (classDef.jsNativeLoadSpec.isDefined || classDef.jsNativeMembers.nonEmpty) {
+      if (
+        classDef.jsNativeLoadSpec.isDefined ||
+        classDef.topLevelImportDefs.exists(_.isInstanceOf[Trees.JSNativeMemberDef])
+      ) {
         Trees.ClassDef(
           classDef.name,
           classDef.originalName,
@@ -45,20 +48,24 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
           classDef.methods,
           classDef.jsConstructor,
           classDef.jsMethodProps,
-          classDef.jsNativeMembers.map(transform),
+          classDef.topLevelImportDefs.map(transform),
           classDef.topLevelExportDefs,
         )(classDef.optimizerHints)(using classDef.pos)
       } else classDef
     }
 
-  private def transform(member: Trees.JSNativeMemberDef): Trees.JSNativeMemberDef = {
-    implicit val pos: Position = member.pos
-    Trees.JSNativeMemberDef(
-      member.flags,
-      member.name,
-      transform(member.jsNativeLoadSpec),
-    )
-  }
+  private def transform(importDef: Trees.TopLevelImportDef): Trees.TopLevelImportDef =
+    importDef match {
+      case member: Trees.JSNativeMemberDef =>
+        implicit val pos: Position = member.pos
+        Trees.JSNativeMemberDef(
+          member.flags,
+          member.name,
+          transform(member.jsNativeLoadSpec),
+        )
+      // Wasm imports refer to Wasm module names, not JS module specifiers
+      case other => other
+    }
 
   private def transform(spec: Trees.JSNativeLoadSpec): Trees.JSNativeLoadSpec =
     spec match {
