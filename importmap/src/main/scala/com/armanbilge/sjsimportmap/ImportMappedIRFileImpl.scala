@@ -33,7 +33,7 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
       if (
         classDef.jsNativeLoadSpec.isDefined ||
         classDef.topLevelImportDefs.exists(_.isInstanceOf[Trees.JSNativeMemberDef])
-      )
+      ) {
         Trees.ClassDef(
           classDef.name,
           classDef.originalName,
@@ -49,23 +49,23 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
           classDef.jsMethodProps,
           classDef.topLevelImportDefs.map(transform),
           classDef.topLevelExportDefs,
-        )(classDef.optimizerHints)(classDef.pos)
-      else classDef
+        )(classDef.optimizerHints)(using classDef.pos)
+      } else classDef
     }
 
-  private[this] def transform(importDef: Trees.TopLevelImportDef): Trees.TopLevelImportDef =
+  private def transform(importDef: Trees.TopLevelImportDef): Trees.TopLevelImportDef =
     importDef match {
       case member: Trees.JSNativeMemberDef =>
         Trees.JSNativeMemberDef(
           member.flags,
           member.name,
           transform(member.jsNativeLoadSpec),
-        )(member.pos)
+        )(using member.pos)
       // Wasm imports refer to Wasm module names, not JS module specifiers
       case other => other
     }
 
-  private[this] def transform(spec: Trees.JSNativeLoadSpec): Trees.JSNativeLoadSpec =
+  private def transform(spec: Trees.JSNativeLoadSpec): Trees.JSNativeLoadSpec =
     spec match {
       case importSpec: Trees.JSNativeLoadSpec.Import => transform(importSpec)
       case Trees.JSNativeLoadSpec.ImportWithGlobalFallback(importSpec, globalSpec) =>
@@ -73,7 +73,7 @@ private final class ImportMappedIRFileImpl(impl: IRFileImpl, mapper: String => S
       case other => other
     }
 
-  private[this] def transform(
+  private def transform(
       importSpec: Trees.JSNativeLoadSpec.Import,
   ): Trees.JSNativeLoadSpec.Import =
     importSpec.copy(module = mapper(importSpec.module))
